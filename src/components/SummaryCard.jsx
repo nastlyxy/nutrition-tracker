@@ -1,8 +1,9 @@
-export default function SummaryCard({calories, protein, fats, carbs}) {
+export default function SummaryCard({targetCalories, consumedCalories, protein, fats, carbs}) {
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 mt-8">
       <h2 className="text-xl font-bold mb-4">Today's Summary</h2>
-      <p className="text-slate-500">Calories: {calories} kcal</p>
+      <p className="text-slate-500">Calories: {targetCalories} kcal</p>
+      <p className="text-slate-800">Consumed: {consumedCalories}</p>
       <div className="flex justify-between mt-6 pt-6 border-t border-slate-200">
         <div className="text-center">
           <p className="text-lg text-slate-600 bg-lime-300 p-2 rounded-xl">
