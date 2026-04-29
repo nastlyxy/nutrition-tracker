@@ -46,11 +46,14 @@ function App() {
     <div className="mx-auto max-w-6xl min-h-screen bg-sky-100">
       <h1 className="text-2xl font-bold text-center pt-8">MacroTracker</h1>
       <SummaryCard
-        targetCalories={totalCalories}
-        consumedCalories={userTDEE}
-        protein={totalProtein}
-        fats={totalFats}
-        carbs={totalCarbs}
+        consumedCalories={totalCalories}
+        targetCalories={userTDEE}
+        consumedProtein={totalProtein}
+        consumedFats={totalFats}
+        consumedCarbs={totalCarbs}
+        targetProtein={userMacros.protein}
+        targetFats={userMacros.fats}
+        targetCarbs={userMacros.carbs}
       />
       <FoodList foods={foods} />
     </div>
