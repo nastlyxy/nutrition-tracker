@@ -9,40 +9,66 @@ export default function SummaryCard({
   targetCarbs,
 }) {
   const progressKcal = Math.min((consumedCalories / targetCalories) * 100, 100);
+  const progressProtein = Math.min(
+    (consumedProtein / targetProtein) * 100,
+    100,
+  );
+  const progressFats = Math.min((consumedFats / targetFats) * 100, 100);
+  const progressCarbs = Math.min((consumedCarbs / targetCarbs) * 100, 100);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 mt-8">
       <h2 className="text-xl font-bold mb-4">Today's Summary</h2>
-      <p className="">Consumed kcal / Target kcal</p>
       <div className="bg-slate-200 h-5 rounded-xl">
-        <div className="bg-sky-500 h-5 rounded-full" style={{ width: `${progressKcal}%` }}></div>
+        <div
+          className="bg-gradient-to-r from-sky-400 to-indigo-500 h-5 rounded-full"
+          style={{ width: `${progressKcal}%` }}
+        ></div>
       </div>
-      <p className="text-slate-800">Consumed: {consumedCalories} kcal</p>
-      <p className="text-slate-500">Target: {targetCalories} kcal</p>
+      <div className="mb-4">
+        <span className="text-4xl font-extrabold text-slate-800">
+          {consumedCalories}
+        </span>
+        <span className="text-sm font-medium text-slate-400">
+          /{targetCalories} kcal
+        </span>
+      </div>
       <div className="flex justify-between mt-6 pt-6 border-t border-slate-200">
         <div className="text-center">
-          <p className="text-lg text-slate-600 bg-lime-300 p-2 rounded-xl">
-            Protein
-          </p>
-          <p className="font-bold">
+          <p className="text-sm font-semibold text-slate-500">Protein</p>
+          <p className="text-slate-700 font-bold">
             {consumedProtein}/{targetProtein} g
           </p>
+          <div className="w-full h-1.5 bg-slate-100 rounded-full mt-2">
+            <div
+              className="bg-lime-400 h-1.5 rounded-full"
+              style={{ width: `${progressProtein}%` }}
+            ></div>
+          </div>
         </div>
         <div className="text-center">
-          <p className="text-lg text-slate-600 bg-red-400 p-2 rounded-xl">
-            Fats
-          </p>
-          <p className="font-bold">
+          <p className="text-sm font-semibold text-slate-500">Fats</p>
+          <p className="text-slate-700 font-bold">
             {consumedFats}/{targetFats} g
           </p>
+          <div className="w-full h-1.5 bg-slate-100 rounded-full mt-2">
+            <div
+              className="bg-red-400 h-1.5 rounded-full"
+              style={{ width: `${progressFats}%` }}
+            ></div>
+          </div>
         </div>
         <div className="text-center">
-          <p className="text-lg text-slate-800 bg-amber-200 p-2 rounded-xl">
-            Carbs
+          <p className="text-sm font-semibold text-slate-500">Carbs</p>
+          <p className="text-slate-700 font-bold">
+            {consumedCarbs}/{targetCarbs} g
           </p>
-          <p className="font-bold">
-            {consumedCarbs}/{consumedCarbs} g
-          </p>
+          <div className="w-full h-1.5 bg-slate-100 rounded-full mt-2">
+            <div
+              className="bg-amber-400 h-1.5 rounded-full"
+              style={{ width: `${progressCarbs}%` }}
+            ></div>
+          </div>
         </div>
       </div>
     </div>
