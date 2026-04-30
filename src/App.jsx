@@ -7,6 +7,7 @@ import {
 
 import SummaryCard from "./components/SummaryCard";
 import FoodList from "./components/FoodList";
+import AddFoodForm from "./components/AddFoodForm";
 
 function App() {
   const userWeight = 60;
@@ -19,24 +20,11 @@ function App() {
   const userTDEE = calculateTDEE(userBMR, userActivity);
   const userMacros = calculateMacros(userWeight, userTDEE);
 
-  const [foods, setFoods] = useState([
-    {
-      id: 1,
-      name: "Homemade Syrniki",
-      calories: 320,
-      protein: 35,
-      fats: 10,
-      carbs: 25,
-    },
-    {
-      id: 2,
-      name: "Chicken & Rice",
-      calories: 450,
-      protein: 45,
-      fats: 5,
-      carbs: 50,
-    },
-  ]);
+  const [foods, setFoods] = useState([]);
+
+  const handleAddFood = (newFood) => {
+    setFoods([...foods, newFood]);
+  };
 
   const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
   const totalProtein = foods.reduce((sum, food) => sum + food.protein, 0);
@@ -56,6 +44,7 @@ function App() {
         targetCarbs={userMacros.carbs}
       />
       <FoodList foods={foods} />
+      <AddFoodForm onAddFood={handleAddFood} />
     </div>
   );
 }

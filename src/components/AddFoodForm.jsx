@@ -7,63 +7,71 @@ export default function AddFoodForm({ onAddFood }) {
   const [fats, setFats] = useState("");
   const [carbs, setCarbs] = useState("");
 
-  const handleSubmit = (e) =>{
+  const handleSubmit = (e) => {
     e.preventDefault();
     const newFood = {
-        name: name,
-        calories: Number(calories),
-        protein: Number(protein),
-        fats: Number(fats),
-        carbs: Number(carbs),
-        id: Date.now(),
-    }
+      name: name,
+      calories: Number(calories),
+      protein: Number(protein),
+      fats: Number(fats),
+      carbs: Number(carbs),
+      id: Date.now(),
+    };
 
     onAddFood(newFood);
     setName("");
     setCalories("");
     setProtein("");
-    setFats(""); 
+    setFats("");
     setCarbs("");
-  }
+  };
 
   return (
-    <form className="bg-white rounded-2xl shadow-md p-6 mt-8" onSubmit={handleSubmit}>
+    <form
+      className="bg-white rounded-2xl shadow-md p-6 mt-8"
+      onSubmit={handleSubmit}
+    >
       <input
         type="text"
         value={name}
-        onChange={setName((e) => e.target.value)}
+        onChange={(e) => setName(e.target.value)}
         placeholder="Name of dish..."
-        className=""
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
       />
       <input
-        type="text"
+        type="number"
         value={calories}
-        onChange={setCalories((e) => e.target.value)}
+        onChange={(e) => setCalories(e.target.value)}
         placeholder="Calories..."
-        className=""
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
       />
       <input
-        type="text"
+        type="number"
         value={protein}
-        onChange={setProtein((e) => e.target.value)}
+        onChange={(e) => setProtein(e.target.value)}
         placeholder="Protein..."
-        className=""
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
       />
       <input
-        type="text"
+        type="number"
         value={fats}
-        onChange={setFats((e) => e.target.value)}
+        onChange={(e) => setFats(e.target.value)}
         placeholder="Fats..."
-        className=""
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
       />
       <input
-        type="text"
+        type="number"
         value={carbs}
-        onChange={setCarbs((e) => e.target.value)}
+        onChange={(e) => setCarbs(e.target.value)}
         placeholder="Carbs..."
-        className=""
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
       />
-      <button type="submit" className="text-white bg-brand box-border hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5"></button>
+      <button
+        type="submit"
+        className="text-white bg-sky-500 hover:bg-sky-600 focus:ring-sky-300 shadow-xs font-medium leading-5 rounded-lg text-sm px-4 py-2.5"
+      >
+        Add meal
+      </button>
     </form>
   );
 }
