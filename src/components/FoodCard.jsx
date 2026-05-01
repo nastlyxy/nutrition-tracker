@@ -1,4 +1,4 @@
-export default function FoodCard({ food }) {
+export default function FoodCard({ food, onDeleteFood }) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 mb-4 overflow-hidden">
       <details className="group">
@@ -14,14 +14,16 @@ export default function FoodCard({ food }) {
                 Kcal
               </p>
             </div>
-            <button className="text-green-500 text-3xl font-bold hover:text-green-600 transition-colors">
-              +
+            <button
+              onClick={() => onDeleteFood(food.id)}
+              className="text-red-400 text-xl font-bold hover:text-red-500 transition-colors"
+            >
+              ✕
             </button>
           </div>
         </summary>
         <div className="bg-slate-50 px-4 py-3 border-t border-slate-100 flex justify-between items-center text-sm text-slate-600">
           <div className="">
-            
             <span>{food.protein}</span>
           </div>
           <div className="">

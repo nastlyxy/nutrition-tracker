@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   calculateBMR,
   calculateTDEE,
   calculateMacros,
 } from "./utils/calculator";
+import {useLocalStorage } from "./hooks/useLocalStorage"
 
 import SummaryCard from "./components/SummaryCard";
 import FoodList from "./components/FoodList";
@@ -20,12 +21,14 @@ function App() {
   const userTDEE = calculateTDEE(userBMR, userActivity);
   const userMacros = calculateMacros(userWeight, userTDEE);
 
-  const [foods, setFoods] = useState([]);
+  const [foods, setFoods] = useLocalStorage("trackerFoods", []);
 
   const handleAddFood = (newFood) => {
     setFoods([...foods, newFood]);
   };
-
+  const handleDeleteFood = (id) => {
+    setFoods(foods.filter((food) => food.id !== id));
+  };
   const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
   const totalProtein = foods.reduce((sum, food) => sum + food.protein, 0);
   const totalFats = foods.reduce((sum, food) => sum + food.fats, 0);
@@ -43,7 +46,7 @@ function App() {
         targetFats={userMacros.fats}
         targetCarbs={userMacros.carbs}
       />
-      <FoodList foods={foods} />
+      <FoodList foods={foods} onDeleteFood={handleDeleteFood} />
       <AddFoodForm onAddFood={handleAddFood} />
     </div>
   );
