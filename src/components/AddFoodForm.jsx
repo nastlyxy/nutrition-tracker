@@ -1,6 +1,11 @@
 import { useState } from "react";
+import { useContext } from "react";
+import { FoodContext } from "../context/FoodContext";
 
-export default function AddFoodForm({ onAddFood }) {
+export default function AddFoodForm() {
+
+  const {handleAddFood} = useContext(FoodContext);
+
   const [name, setName] = useState("");
   const [calories, setCalories] = useState("");
   const [protein, setProtein] = useState("");
@@ -11,7 +16,7 @@ export default function AddFoodForm({ onAddFood }) {
   const [weight, setWeight] = useState("");
 
   const handleSubmit = (e) => {
-
+    e.preventDefault();
     let finalCalories = Number(calories);
     let finalProtein = Number(protein);
     let finalFats = Number(fats);
@@ -25,7 +30,7 @@ export default function AddFoodForm({ onAddFood }) {
       finalCarbs = Math.round((finalCarbs / 100) * portion);
     }
 
-    e.preventDefault();
+    
     const newFood = {
       name: name,
       calories: finalCalories,
@@ -35,7 +40,7 @@ export default function AddFoodForm({ onAddFood }) {
       id: Date.now(),
     };
 
-    onAddFood(newFood);
+    handleAddFood(newFood);
     setName("");
     setCalories("");
     setProtein("");

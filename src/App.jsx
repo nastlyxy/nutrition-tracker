@@ -11,8 +11,7 @@ import FoodList from "./components/FoodList";
 import AddFoodForm from "./components/AddFoodForm";
 
 function App() {
-   
-  const {foods, handleAddFood} = useContext(FoodContext);
+  const { foods } = useContext(FoodContext);
 
   const userWeight = 60;
   const userHeight = 167;
@@ -29,20 +28,27 @@ function App() {
   const totalFats = foods.reduce((sum, food) => sum + food.fats, 0);
   const totalCarbs = foods.reduce((sum, food) => sum + food.carbs, 0);
   return (
-    <div className="mx-auto max-w-6xl min-h-screen bg-sky-100">
-      <h1 className="text-2xl font-bold text-center pt-8">MacroTracker</h1>
-      <SummaryCard
-        consumedCalories={totalCalories}
-        targetCalories={userTDEE}
-        consumedProtein={totalProtein}
-        consumedFats={totalFats}
-        consumedCarbs={totalCarbs}
-        targetProtein={userMacros.protein}
-        targetFats={userMacros.fats}
-        targetCarbs={userMacros.carbs}
-      />
-      <FoodList foods={foods}/>
-      <AddFoodForm onAddFood={handleAddFood} />
+    <div className="min-h-screen bg-sky-50 py-8 px-4 sm:px-8 font-sans">
+      <div className="mx-auto max-w-2xl">
+        <h1 className="text-3xl font-extrabold text-slate-800 text-center mb-6 tracking-tight">
+          MacroTracker
+        </h1>
+
+        <SummaryCard
+          consumedCalories={totalCalories}
+          targetCalories={userTDEE}
+          consumedProtein={totalProtein}
+          consumedFats={totalFats}
+          consumedCarbs={totalCarbs}
+          targetProtein={userMacros.protein}
+          targetFats={userMacros.fats}
+          targetCarbs={userMacros.carbs}
+        />
+
+        <AddFoodForm />
+
+        <FoodList foods={foods} />
+      </div>
     </div>
   );
 }
