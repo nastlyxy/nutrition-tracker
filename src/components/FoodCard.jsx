@@ -1,4 +1,10 @@
-export default function FoodCard({ food, onDeleteFood }) {
+import { useContext } from "react";
+import { FoodContext } from "../context/FoodContext";
+
+export default function FoodCard({ food}) {
+
+  const {handleDeleteFood} = useContext(FoodContext);
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 mb-4 overflow-hidden">
       <details className="group">
@@ -15,7 +21,7 @@ export default function FoodCard({ food, onDeleteFood }) {
               </p>
             </div>
             <button
-              onClick={() => onDeleteFood(food.id)}
+              onClick={() => handleDeleteFood(food.id)}
               className="text-red-400 text-xl font-bold hover:text-red-500 transition-colors"
             >
               ✕
