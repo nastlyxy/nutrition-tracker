@@ -12,8 +12,9 @@ import FoodList from "../components/FoodList";
 import AddFoodForm from "../components/AddFoodForm";
 
 export default function Tracker() {
-  const { foods } = useContext(FoodContext);
-  const {weight, height, age, gender, activityLevel, goal} = useContext(UserContext);
+  const { foods, currentDay, setCurrentDay } = useContext(FoodContext);
+  const { weight, height, age, gender, activityLevel, goal } =
+    useContext(UserContext);
 
   const userBMR = calculateBMR(weight, age, height, gender);
   const userTDEE = calculateTDEE(userBMR, activityLevel);
@@ -25,8 +26,14 @@ export default function Tracker() {
   const totalCarbs = foods.reduce((sum, food) => sum + food.carbs, 0);
   return (
     <>
-    
-
+      <div className="flex justify-center mb-6">
+        <input
+          type="date"
+          value={currentDay}
+          onChange={(e) => setCurrentDay(e.target.value)}
+          className="bg-white border-none rounded-xl shadow-sm px-4 py-2 text-slate-700 font-bold outline-none cursor-pointer"
+        />
+      </div>
       <SummaryCard
         consumedCalories={totalCalories}
         targetCalories={userMacros.targetCalories}
