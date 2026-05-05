@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import { FoodContext } from "../context/FoodContext"
+import { FoodContext } from "../context/FoodContext";
+import { UserContext } from "../context/UserContext";
 import {
   calculateBMR,
   calculateTDEE,
@@ -12,16 +13,11 @@ import AddFoodForm from "../components/AddFoodForm";
 
 export default function Tracker() {
   const { foods } = useContext(FoodContext);
+  const {weight, height, age, gender, activityLevel, goal} = useContext(UserContext);
 
-  const userWeight = 60;
-  const userHeight = 167;
-  const userAge = 18;
-  const userGender = "female";
-  const userActivity = "moderate";
-
-  const userBMR = calculateBMR(userWeight, userAge, userHeight, userGender);
-  const userTDEE = calculateTDEE(userBMR, userActivity);
-  const userMacros = calculateMacros(userWeight, userTDEE);
+  const userBMR = calculateBMR(weight, age, height, gender);
+  const userTDEE = calculateTDEE(userBMR, activityLevel);
+  const userMacros = calculateMacros(weight, userTDEE, goal);
 
   const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
   const totalProtein = foods.reduce((sum, food) => sum + food.protein, 0);
@@ -33,7 +29,7 @@ export default function Tracker() {
 
       <SummaryCard
         consumedCalories={totalCalories}
-        targetCalories={userTDEE}
+        targetCalories={userMacros.targetCalories}
         consumedProtein={totalProtein}
         consumedFats={totalFats}
         consumedCarbs={totalCarbs}

@@ -13,6 +13,8 @@ export default function Profile() {
     setGender,
     activityLevel,
     setActivityLevel,
+    goal,
+    setGoal,
   } = useContext(UserContext);
   return (
     <form className="bg-white rounded-2xl shadow-md p-6 mt-8">
@@ -79,6 +81,19 @@ export default function Profile() {
           active
         </option>
       </select>
+      <label htmlFor="goal-select" className="block text-sm font-semibold text-slate-500 mb-1">Activity level</label>
+      <select
+        name="goal"
+        id="goal-select"
+        onChange={(e) => setGoal(e.target.value)}
+        value={goal}
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 bg-white"
+      >
+        <option value="deficit">Weight Loss (Deficit)</option>
+        <option value="maintenance">Maintain Weight</option>
+        <option value="surplus">Muscle Gain (Surplus)</option>
+      </select>
+
     </form>
   );
 }

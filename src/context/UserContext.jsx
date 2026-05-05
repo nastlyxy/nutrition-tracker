@@ -12,6 +12,7 @@ export function UserProvider({ children }) {
     "userActivityLevel",
     "moderate",
   );
+  const [goal, setGoal] = useLocalStorage("userGoal", "maintenance");
 
   return (
     <UserContext.Provider
@@ -26,6 +27,8 @@ export function UserProvider({ children }) {
         setGender,
         activityLevel,
         setActivityLevel,
+        goal,
+        setGoal,
       }}
     >
       {children}

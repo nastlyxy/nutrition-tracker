@@ -17,11 +17,24 @@ export function calculateTDEE(bmr, activityLevel) {
   return Math.round(bmr * (multipliers[activityLevel] || 1.2));
 }
 
-export function calculateMacros(weight, tdee) {
-    const protein = Math.round(weight * 1.8);
-    const fats = Math.round(weight * 1);
-    const carbs = Math.round((tdee - (protein*4)-(fats*9))/4);
+export function calculateMacros(weight, tdee, goal) {
+  let targetCalories = tdee;
+  if (goal === "deficit") {
+    targetCalories = Math.round(tdee * 0.85);
+  } else if (goal === "surplus") {
+    targetCalories = Math.round(tdee * 1.15);
+  }
+
+  let proteinMultiplier = 1.8;
+  if (goal === "deficit") {
+    proteinMultiplier = 2.0;
+  }
+
+  const protein = Math.round(weight * proteinMultiplier);
+  const fats = Math.round(weight * 1);
+  const carbs = Math.round((tdee - protein * 4 - fats * 9) / 4);
   return {
+    targetCalories: targetCalories,
     protein: protein,
     fats: fats,
     carbs: carbs,
