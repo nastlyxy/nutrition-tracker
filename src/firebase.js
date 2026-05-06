@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD6UFjj4ikV8kEDp-KJa553gW8CSNvYdSE",
-  authDomain: "simplycalo.firebaseapp.com",
-  projectId: "simplycalo",
-  storageBucket: "simplycalo.firebasestorage.app",
-  messagingSenderId: "760226731756",
-  appId: "1:760226731756:web:b23638e7d092e8b35977c9"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 
