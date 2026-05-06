@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { useContext } from "react";
+import { useState, useContext, useRef} from "react";
 import { FoodContext } from "../context/FoodContext";
 
 export default function AddFoodForm() {
 
   const {handleAddFood} = useContext(FoodContext);
+
+  const nameInputRef = useRef(null);
 
   const [name, setName] = useState("");
   const [calories, setCalories] = useState("");
@@ -48,6 +49,7 @@ export default function AddFoodForm() {
     setCarbs("");
     setIsPer100g(false);
     setWeight("");
+    nameInputRef.current.focus();
   };
 
   return (
@@ -58,6 +60,7 @@ export default function AddFoodForm() {
       <input
         type="text"
         value={name}
+        ref={nameInputRef}
         onChange={(e) => setName(e.target.value)}
         placeholder="Name of dish..."
         className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"

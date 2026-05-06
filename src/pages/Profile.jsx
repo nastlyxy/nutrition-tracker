@@ -81,7 +81,7 @@ export default function Profile() {
           active
         </option>
       </select>
-      <label htmlFor="goal-select" className="block text-sm font-semibold text-slate-500 mb-1">Activity level</label>
+      <label htmlFor="goal-select" className="block text-sm font-semibold text-slate-500 mb-1">Goal</label>
       <select
         name="goal"
         id="goal-select"

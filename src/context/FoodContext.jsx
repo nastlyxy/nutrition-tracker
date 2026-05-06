@@ -1,39 +1,54 @@
-import { createContext, useState } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { createContext, useState, useEffect } from "react";
+import { db } from "../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export const FoodContext = createContext();
 
-function getTodayDay(){
+function getTodayDay() {
   return new Date().toISOString().split("T")[0];
 }
 
 export function FoodProvider({ children }) {
-  const [history, setHistory] = useLocalStorage("foodHistory", {});
   const [currentDay, setCurrentDay] = useState(getTodayDay());
-  const foods = history[currentDay] || [];
+  const [foods, setFoods] = useState([]);
 
-  const handleAddFood = (newFood) => {
-    setHistory((prevHistory) => {
-      const currentDayFoods = prevHistory[currentDay] || [];
-      return {
-        ...prevHistory, 
-        [currentDay]: [...currentDayFoods, newFood],
-      };
-    });
-  };
-  const handleDeleteFood = (id) => {
-    setHistory((prevHistory)=>{
-      const currentDayFoods = prevHistory[currentDay] || [];
-      return {
-        ...prevHistory,
-        [currentDay]: currentDayFoods.filter(food => food.id !== id)
+  useEffect(() => {
+    const fetchDailyFoods = async () => {
+      const docRef = doc(db, "daily_logs", currentDay);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setFoods(docSnap.data().meals);
+      } else {
+        setFoods([]);
       }
-    })
+    };
+    fetchDailyFoods();
+  }, [currentDay]);
+
+  const handleAddFood = async (newFood) => {
+    const updatedFoods = [...foods, newFood];
+    setFoods(updatedFoods);
+    const docRef = doc(db, "daily_logs", currentDay);
+    await setDoc(docRef, { meals: updatedFoods });
+  };
+  const handleDeleteFood = async (id) => {
+    const updatedFoods = foods.filter((food) => food.id !== id);
+    setFoods(updatedFoods);
+    const docRef = doc(db, "daily_logs", currentDay);
+    await setDoc(docRef, { meals: updatedFoods });
   };
 
-  return(
-    <FoodContext.Provider value={{history, currentDay, setCurrentDay, foods, handleAddFood, handleDeleteFood}}>
-        {children}
+  return (
+    <FoodContext.Provider
+      value={{
+        currentDay,
+        setCurrentDay,
+        foods,
+        handleAddFood,
+        handleDeleteFood,
+      }}
+    >
+      {children}
     </FoodContext.Provider>
-  )
+  );
 }
