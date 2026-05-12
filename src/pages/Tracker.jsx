@@ -10,6 +10,7 @@ import {
 import SummaryCard from "../components/SummaryCard";
 import FoodList from "../components/FoodList";
 import AddFoodForm from "../components/AddFoodForm";
+import DateSelector from "../components/DateSelector";
 
 export default function Tracker() {
   const { foods, currentDay, setCurrentDay } = useContext(FoodContext);
@@ -29,14 +30,7 @@ export default function Tracker() {
   const totalCarbs = foods.reduce((sum, food) => sum + food.carbs, 0);
   return (
     <>
-      <div className="flex justify-center mb-6">
-        <input
-          type="date"
-          value={currentDay}
-          onChange={(e) => setCurrentDay(e.target.value)}
-          className="bg-white border-none rounded-xl shadow-sm px-4 py-2 text-slate-700 font-bold outline-none cursor-pointer"
-        />
-      </div>
+      <DateSelector currentDay={currentDay} onChangeDate={setCurrentDay}/>
       <SummaryCard
         consumedCalories={totalCalories}
         targetCalories={userMacros.targetCalories}
