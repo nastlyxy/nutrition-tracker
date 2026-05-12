@@ -13,8 +13,11 @@ import AddFoodForm from "../components/AddFoodForm";
 
 export default function Tracker() {
   const { foods, currentDay, setCurrentDay } = useContext(FoodContext);
-  const { weight, height, age, gender, activityLevel, goal } =
+  const { userStats:{ weight, height, age, gender, activityLevel, goal}, isProfileLoading } =
     useContext(UserContext);
+  if (isProfileLoading) {
+  return <div className="text-center mt-20 text-slate-500 font-semibold">Loading your profile...</div>;
+}  
 
   const userBMR = calculateBMR(weight, age, height, gender);
   const userTDEE = calculateTDEE(userBMR, activityLevel);

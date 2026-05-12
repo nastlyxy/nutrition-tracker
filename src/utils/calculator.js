@@ -32,7 +32,7 @@ export function calculateMacros(weight, tdee, goal) {
 
   const protein = Math.round(weight * proteinMultiplier);
   const fats = Math.round(weight * 1);
-  const carbs = Math.round((tdee - protein * 4 - fats * 9) / 4);
+  const carbs = Math.round((targetCalories - protein * 4 - fats * 9) / 4);
   return {
     targetCalories: targetCalories,
     protein: protein,

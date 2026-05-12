@@ -1,99 +1,117 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 
 export default function Profile() {
-  const {
-    weight,
-    setWeight,
-    height,
-    setHeight,
-    age,
-    setAge,
-    gender,
-    setGender,
-    activityLevel,
-    setActivityLevel,
-    goal,
-    setGoal,
-  } = useContext(UserContext);
+  const { userStats, updateUser } = useContext(UserContext);
+  const [formData, setFormData] = useState(userStats);
+
+  useEffect(() => {
+    setFormData(userStats);
+  }, [userStats]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]:
+        name === "weight" || name === "height" || name === "age"
+          ? Number(value)
+          : value,
+    });
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    updateUser(formData);
+    alert("Profile saved successfully!");
+  };
+
   return (
-    <form className="bg-white rounded-2xl shadow-md p-6 mt-8">
-      <label htmlFor="weight" className="block text-sm font-semibold text-slate-500 mb-1">Your weight</label>
+    <form
+      className="bg-white rounded-2xl shadow-md p-6 mt-8"
+      onSubmit={handleSave}
+    >
+      <label className="block text-sm font-semibold text-slate-500 mb-1">
+        Your weight
+      </label>
       <input
         type="number"
-        id="weight"
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 bg-white"
-        placeholder="Weight..."
-        onChange={(e) => setWeight(e.target.value)}
-        value={weight}
+        name="weight"
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 bg-white"
+        onChange={handleChange}
+        value={formData.weight}
       />
-      <label htmlFor="height" className="block text-sm font-semibold text-slate-500 mb-1">Your height</label>
+
+      <label className="block text-sm font-semibold text-slate-500 mb-1">
+        Your height
+      </label>
       <input
         type="number"
-        id="height"
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 bg-white"
-        placeholder="Your height..."
-        onChange={(e) => setHeight(e.target.value)}
-        value={height}
+        name="height"
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 bg-white"
+        onChange={handleChange}
+        value={formData.height}
       />
-      <label htmlFor="age" className="block text-sm font-semibold text-slate-500 mb-1">Your age</label>
+
+      <label className="block text-sm font-semibold text-slate-500 mb-1">
+        Your age
+      </label>
       <input
         type="number"
-        id="age"
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 bg-white"
-        placeholder="Your Age..."
-        onChange={(e) => setAge(e.target.value)}
-        value={age}
+        name="age"
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 bg-white"
+        onChange={handleChange}
+        value={formData.age}
       />
-      <label htmlFor="gender-select" className="block text-sm font-semibold text-slate-500 mb-1">Gender</label>
+
+      <label className="block text-sm font-semibold text-slate-500 mb-1">
+        Gender
+      </label>
       <select
         name="gender"
-        id="gender-select"
-        onChange={(e) => setGender(e.target.value)}
-        value={gender}
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 bg-white"
+        onChange={handleChange}
+        value={formData.gender}
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 bg-white"
       >
-        <option value="female" className="">
-          Female
-        </option>
-        <option value="male" className="">
-          Male
-        </option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
       </select>
-      <label htmlFor="activityLevel-select" className="block text-sm font-semibold text-slate-500 mb-1">Activity level</label>
+
+      <label className="block text-sm font-semibold text-slate-500 mb-1">
+        Activity level
+      </label>
       <select
         name="activityLevel"
-        id="activityLevel-select"
-        onChange={(e) => setActivityLevel(e.target.value)}
-        value={activityLevel}
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 bg-white"
+        onChange={handleChange}
+        value={formData.activityLevel}
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 bg-white"
       >
-        <option value="sedentary" className="">
-          sedentary
-        </option>
-        <option value="light" className="">
-          light
-        </option>
-        <option value="moderate" className="">
-          moderate
-        </option>
-        <option value="active" className="">
-          active
-        </option>
+        <option value="sedentary">Sedentary</option>
+        <option value="light">Light</option>
+        <option value="moderate">Moderate</option>
+        <option value="active">Active</option>
       </select>
-      <label htmlFor="goal-select" className="block text-sm font-semibold text-slate-500 mb-1">Goal</label>
+
+      <label className="block text-sm font-semibold text-slate-500 mb-1">
+        Goal
+      </label>
       <select
         name="goal"
-        id="goal-select"
-        onChange={(e) => setGoal(e.target.value)}
-        value={goal}
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 bg-white"
+        onChange={handleChange}
+        value={formData.goal}
+        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-6 outline-none focus:border-sky-400 bg-white"
       >
         <option value="deficit">Weight Loss (Deficit)</option>
         <option value="maintenance">Maintain Weight</option>
         <option value="surplus">Muscle Gain (Surplus)</option>
       </select>
 
+      <button
+        type="submit"
+        className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl transition-colors"
+      >
+        Save Changes
+      </button>
     </form>
   );
 }
