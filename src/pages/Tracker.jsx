@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import { FoodContext } from "../context/FoodContext";
 import { UserContext } from "../context/UserContext";
 import {
@@ -13,33 +13,56 @@ import AddFoodForm from "../components/AddFoodForm";
 import DateSelector from "../components/DateSelector";
 
 export default function Tracker() {
-  const { foods, currentDay, setCurrentDay } = useContext(FoodContext);
-  const { userStats:{ weight, height, age, gender, activityLevel, goal}, isProfileLoading } =
-    useContext(UserContext);
+  const { foods, currentDay, setCurrentDay, daySnapshot } =
+    useContext(FoodContext);
+  const {
+    userStats: { weight, height, age, gender, activityLevel, goal },
+    isProfileLoading,
+  } = useContext(UserContext);
+
+  const consumed = useMemo(() => {
+    return foods.reduce(
+      (acc, food) => {
+        acc.calories += food.calories || 0;
+        acc.protein += food.protein || 0;
+        acc.carbs += food.carbs || 0;
+        acc.fats += food.fats || 0;
+        return acc;
+      },
+      { calories: 0, protein: 0, carbs: 0, fats: 0 },
+    );
+  }, [foods]);
+
   if (isProfileLoading) {
-  return <div className="text-center mt-20 text-slate-500 font-semibold">Loading your profile...</div>;
-}  
+    return (
+      <div className="text-center mt-20 text-slate-500 font-semibold">
+        Loading your profile...
+      </div>
+    );
+  }
 
   const userBMR = calculateBMR(weight, age, height, gender);
   const userTDEE = calculateTDEE(userBMR, activityLevel);
-  const userMacros = calculateMacros(weight, userTDEE, goal);
+  const freshMacros = calculateMacros(weight, userTDEE, goal);
+  const finalTargetCalories = daySnapshot
+    ? daySnapshot.targetCalories
+    : freshMacros.targetCalories;
+  const finalProtein = daySnapshot ? daySnapshot.protein : freshMacros.protein;
+  const finalFats = daySnapshot ? daySnapshot.fats : freshMacros.fats;
+  const finalCarbs = daySnapshot ? daySnapshot.carbs : freshMacros.carbs;
 
-  const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
-  const totalProtein = foods.reduce((sum, food) => sum + food.protein, 0);
-  const totalFats = foods.reduce((sum, food) => sum + food.fats, 0);
-  const totalCarbs = foods.reduce((sum, food) => sum + food.carbs, 0);
   return (
     <>
-      <DateSelector currentDay={currentDay} onChangeDate={setCurrentDay}/>
+      <DateSelector currentDay={currentDay} onChangeDate={setCurrentDay} />
       <SummaryCard
-        consumedCalories={totalCalories}
-        targetCalories={userMacros.targetCalories}
-        consumedProtein={totalProtein}
-        consumedFats={totalFats}
-        consumedCarbs={totalCarbs}
-        targetProtein={userMacros.protein}
-        targetFats={userMacros.fats}
-        targetCarbs={userMacros.carbs}
+        consumedCalories={consumed.calories}
+        targetCalories={finalTargetCalories}
+        consumedProtein={consumed.protein}
+        consumedFats={consumed.fats}
+        consumedCarbs={consumed.carbs}
+        targetProtein={finalProtein}
+        targetFats={finalFats}
+        targetCarbs={finalCarbs}
       />
 
       <AddFoodForm />

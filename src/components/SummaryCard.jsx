@@ -8,14 +8,18 @@ export default function SummaryCard({
   targetFats,
   targetCarbs,
 }) {
-  const progressKcal = Math.min((consumedCalories / targetCalories) * 100, 100);
-  const progressProtein = Math.min(
-    (consumedProtein / targetProtein) * 100,
-    100,
-  );
-  const progressFats = Math.min((consumedFats / targetFats) * 100, 100);
-  const progressCarbs = Math.min((consumedCarbs / targetCarbs) * 100, 100);
-
+  const progressKcal = targetCalories
+    ? Math.min((consumedCalories / targetCalories) * 100, 100)
+    : 0;
+  const progressProtein = targetProtein
+    ? Math.min((consumedProtein / targetProtein) * 100, 100)
+    : 0;
+  const progressFats = targetFats
+    ? Math.min((consumedFats / targetFats) * 100, 100)
+    : 0;
+  const progressCarbs = targetCarbs
+    ? Math.min((consumedCarbs / targetCarbs) * 100, 100)
+    : 0;
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 mt-8">
       <h2 className="text-xl font-bold mb-4">Today's Summary</h2>
