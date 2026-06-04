@@ -1,16 +1,55 @@
 import { useContext } from "react";
 import { FoodContext } from "../context/FoodContext";
+import { UserContext } from "../context/UserContext";
 
-export default function FoodCard({ food}) {
+export default function FoodCard({ food, targetCalories }) {
+  const { handleDeleteFood } = useContext(FoodContext);
 
-  const {handleDeleteFood} = useContext(FoodContext);
+  const getFoodIcon = (name) => {
+    if (!name) return "🍽️";
+    const lowerName = name.toLowerCase();
+
+    if (
+      lowerName.includes("fruit") ||
+      lowerName.includes("bana") ||
+      lowerName.includes("orange") ||
+      lowerName.includes("apple") ||
+      lowerName.includes("straw")
+    )
+      return "🍎";
+    if (lowerName.includes("egg")) return "🍳";
+    if (
+      lowerName.includes("milk") ||
+      lowerName.includes("cheese") ||
+      lowerName.includes("cottage")
+    )
+      return "🥛";
+    if (
+      lowerName.includes("bread") ||
+      lowerName.includes("rise") ||
+      lowerName.includes("porrige") ||
+      lowerName.includes("pasta")
+    )
+      return "🌾";
+    if (
+      lowerName.includes("meat") ||
+      lowerName.includes("chicken") ||
+      lowerName.includes("pork")
+    )
+      return "🍗";
+    return "🍽️";
+  };
+
+  const percent = targetCalories
+    ? Math.round((food.calories / targetCalories) * 100)
+    : 0;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 mb-4 overflow-hidden">
       <details className="group">
         <summary className="flex justify-between items-center p-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">☀️</span>
+            <span className="text-2xl">{getFoodIcon(food.name)}</span>
             <h3 className="text-lg font-bold text-slate-800">{food.name}</h3>
           </div>
           <div className="flex items-center gap-4">
@@ -29,17 +68,21 @@ export default function FoodCard({ food}) {
           </div>
         </summary>
         <div className="bg-slate-50 px-4 py-3 border-t border-slate-100 flex justify-between items-center text-sm text-slate-600">
-          <div className="">
-            <span>{food.protein}</span>
+          <div className="flex-col items-center">
+            <p>Protein</p>
+            <span className="text-green-500 font-bold">{food.protein} g</span>
+          </div>
+          <div className="flex-col items-center">
+            <p>Fats</p>
+            <span className="text-amber-500 font-bold">{food.fats} g</span>
+          </div>
+          <div className="flex-col items-center">
+            <p>Carbs</p>
+            <span className="text-blue-500 font-bold">{food.carbs} g</span>
           </div>
           <div className="">
-            <span>{food.fats}</span>
-          </div>
-          <div className="">
-            <span>{food.carbs}</span>
-          </div>
-          <div className="">
-            <span className="text-xs text-slate-400">14%</span>
+            <p>DI</p>
+            <span className="text-xs text-slate-400">{`${percent}%`}</span>
           </div>
 
           <span className="text-slate-400 transition-transform duration-200 group-open:rotate-180">

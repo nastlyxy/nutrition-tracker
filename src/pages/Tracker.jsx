@@ -67,7 +67,7 @@ export default function Tracker() {
 
       <AddFoodForm />
 
-      <FoodList foods={foods} />
+      <FoodList foods={foods} targetCalories={finalTargetCalories}/>
     </>
   );
 }
