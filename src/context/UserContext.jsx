@@ -19,26 +19,30 @@ export function UserProvider({ children }) {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    if (!user){
-    setIsProfileLoading(false);
-    return; 
-  }
+    if (!user) {
+      setIsProfileLoading(false);
+      return;
+    }
 
     const fetchProfile = async () => {
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
+      try {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists() && docSnap.data().profile) {
-        setUserStats(docSnap.data().profile);
+        if (docSnap.exists() && docSnap.data().profile) {
+          setUserStats(docSnap.data().profile);
+        }
+      } catch (error) {
+        console.error("Error loading:", error);
+      } finally {
+        setIsProfileLoading(false);
       }
-      setIsProfileLoading(false);
-    };
 
-    fetchProfile();
+      fetchProfile();
+    };
   }, [user]);
 
   const updateUser = async (newStats) => {
-
     setUserStats(newStats);
 
     if (user) {
@@ -50,7 +54,9 @@ export function UserProvider({ children }) {
   return (
     <UserContext.Provider
       value={{
-        userStats, updateUser, isProfileLoading
+        userStats,
+        updateUser,
+        isProfileLoading,
       }}
     >
       {children}

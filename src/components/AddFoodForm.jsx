@@ -1,9 +1,8 @@
-import { useState, useContext, useRef} from "react";
+import { useState, useContext, useRef } from "react";
 import { FoodContext } from "../context/FoodContext";
 
 export default function AddFoodForm() {
-
-  const {handleAddFood} = useContext(FoodContext);
+  const { handleAddFood } = useContext(FoodContext);
 
   const nameInputRef = useRef(null);
 
@@ -15,6 +14,11 @@ export default function AddFoodForm() {
 
   const [isPer100g, setIsPer100g] = useState(false);
   const [weight, setWeight] = useState("");
+
+  const [activeTab, setActiveTab] = useState("search");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,7 +35,6 @@ export default function AddFoodForm() {
       finalCarbs = Math.round((finalCarbs / 100) * portion);
     }
 
-    
     const newFood = {
       name: name,
       calories: finalCalories,
@@ -49,7 +52,9 @@ export default function AddFoodForm() {
     setCarbs("");
     setIsPer100g(false);
     setWeight("");
-    nameInputRef.current.focus();
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
   };
 
   return (
@@ -57,65 +62,103 @@ export default function AddFoodForm() {
       className="bg-white rounded-2xl shadow-md p-6 mt-8"
       onSubmit={handleSubmit}
     >
-      <input
-        type="text"
-        value={name}
-        ref={nameInputRef}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Name of dish..."
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
-      />
-      <input
-        type="number"
-        min="0"
-        value={calories}
-        onChange={(e) => setCalories(e.target.value)}
-        placeholder="Calories..."
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
-      />
-      <input
-        type="number"
-        min="0"
-        value={protein}
-        onChange={(e) => setProtein(e.target.value)}
-        placeholder="Protein..."
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
-      />
-      <input
-        type="number"
-        min="0"
-        value={fats}
-        onChange={(e) => setFats(e.target.value)}
-        placeholder="Fats..."
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
-      />
-      <input
-        type="number"
-        min="0"
-        value={carbs}
-        onChange={(e) => setCarbs(e.target.value)}
-        placeholder="Carbs..."
-        className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
-      />
-      <label className="flex items-center gap-2 mb-4 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={isPer100g}
-          onChange={(e) => setIsPer100g(e.target.checked)}
-          className="w-4 h-4 text-sky-500 rounded focus:ring-sky-400 cursor-pointer"
-        />
-        <span className="text-sm font-medium text-slate-700">Calculate from 100g</span>
-      </label>
-      {isPer100g && (
-        <input
-          type="number"
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
-          placeholder="Portion weight (in grams)..."
-          className="border border-sky-300 bg-sky-50 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:ring-2 focus:ring-sky-400"
-          required={isPer100g}
-          min="0" 
-        />
+      <div className="bg-slate-100 p-1 rounded-xl">
+        <button
+          className={`${activeTab === "search" && "bg-white shadow-sm"}`}
+          onClick={() => setActiveTab("search")}
+        >
+          Search
+        </button>
+        <button
+          className={`${activeTab === "manual" && "bg-white shadow-sm"}`}
+          onClick={() => setActiveTab("manual")}
+        >
+          Manual
+        </button>
+        <button
+          className={`${activeTab === "myMeals" && "bg-white shadow-sm"}`}
+          onClick={() => setActiveTab("myMeals")}
+        >
+          My Meals
+        </button>
+      </div>
+      {activeTab === "search" && (
+        <div className="relative">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search food (e.g. Banana)..."
+            className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:ring-2 focus:ring-sky-400"
+          />
+          <div className="absolute top-full left-0 w-full z-10"></div>
+        </div>
+      )}
+      {activeTab === "manual" && (
+        <>
+          <input
+            type="text"
+            value={name}
+            ref={nameInputRef}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Name of dish..."
+            className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
+          />
+          <input
+            type="number"
+            min="0"
+            value={calories}
+            onChange={(e) => setCalories(e.target.value)}
+            placeholder="Calories..."
+            className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
+          />
+          <input
+            type="number"
+            min="0"
+            value={protein}
+            onChange={(e) => setProtein(e.target.value)}
+            placeholder="Protein..."
+            className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
+          />
+          <input
+            type="number"
+            min="0"
+            value={fats}
+            onChange={(e) => setFats(e.target.value)}
+            placeholder="Fats..."
+            className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
+          />
+          <input
+            type="number"
+            min="0"
+            value={carbs}
+            onChange={(e) => setCarbs(e.target.value)}
+            placeholder="Carbs..."
+            className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4"
+          />
+          <label className="flex items-center gap-2 mb-4 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isPer100g}
+              onChange={(e) => setIsPer100g(e.target.checked)}
+              className="w-4 h-4 text-sky-500 rounded focus:ring-sky-400 cursor-pointer"
+            />
+            <span className="text-sm font-medium text-slate-700">
+              Calculate from 100g
+            </span>
+          </label>
+          {isPer100g && (
+            <input
+              type="number"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              placeholder="Portion weight (in grams)..."
+              className="border border-sky-300 bg-sky-50 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:ring-2 focus:ring-sky-400"
+              required={isPer100g}
+              min="0"
+            />
+          )}
+        </>
       )}
       <button
         type="submit"
