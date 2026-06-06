@@ -1,4 +1,4 @@
-import { useState, useContext, useRef } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import { FoodContext } from "../context/FoodContext";
 
 export default function AddFoodForm() {
@@ -19,6 +19,44 @@ export default function AddFoodForm() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchQuery.length < 2) {
+      setSearchResults([]);
+      setIsDropdownOpen(false);
+      return;
+    }
+    const time = setTimeout(() => {
+      fetchFoodFromAPI();
+    }, 500);
+    return () => clearTimeout(time);
+  }, [searchQuery]);
+
+  const fetchFoodFromAPI = async () => {
+    const apiId = import.meta.env.VITE_EDAMAM_APP_ID;
+    const apiKey = import.meta.env.VITE_EDAMAM_APP_KEY;
+    try {
+      const response = await fetch(
+        `https://api.edamam.com/api/food-database/v2/parser?app_id=${apiId}&app_key=${apiKey}&ingr=${searchQuery}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      const parsedResults = data.hints.slice(0, 5).map((item) => ({
+        foodId: item.food.foodId,
+        foodName: item.food.label,
+        foodKcal: Math.round(item.food.nutrients.ENERC_KCAL || 0),
+        foodProtein: Math.round(item.food.nutrients.PROCNT || 0),
+        foodFats: Math.round(item.food.nutrients.FAT || 0),
+        foodCarbs: Math.round(item.food.nutrients.CHOCDF || 0),
+      }));
+      setSearchResults(parsedResults);
+      setIsDropdownOpen(true);
+    } catch (err) {
+      console.error("Error to fetch: ", err.message);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -91,7 +129,17 @@ export default function AddFoodForm() {
             placeholder="Search food (e.g. Banana)..."
             className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:ring-2 focus:ring-sky-400"
           />
-          <div className="absolute top-full left-0 w-full z-10"></div>
+          <div className="absolute top-full left-0 w-full z-10">
+            {isDropdownOpen && searchResults.length > 0 ? (
+              searchResults.map((result) => (
+                <div key={result.foodId} className="p-3 bg-white border-b border-slate-100 hover:bg-sky-50 cursor-pointer shadow-lg">
+                  {result.foodName} {result.foodKcal} kcal
+                </div>
+              ))
+            ) : (
+              <div>No results found</div>
+            )}
+          </div>
         </div>
       )}
       {activeTab === "manual" && (
