@@ -38,16 +38,24 @@ export function UserProvider({ children }) {
         setIsProfileLoading(false);
       }
 
-      fetchProfile();
+      
     };
+
+    fetchProfile();
   }, [user]);
 
   const updateUser = async (newStats) => {
     setUserStats(newStats);
 
     if (user) {
+      try {
       const docRef = doc(db, "users", user.uid);
       await setDoc(docRef, { profile: newStats }, { merge: true });
+      console.log("Successfully saved in the database");
+    } catch (error) {
+      console.error("Error Firebase:", error);
+      alert("Error, no saving");
+    }
     }
   };
 
