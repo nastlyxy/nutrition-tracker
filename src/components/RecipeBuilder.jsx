@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function RecipeBuilder() {
+export default function RecipeBuilder({ onCancel }) {
   const [recipeName, setRecipeName] = useState("");
   const [ingredients, setIngredients] = useState([]);
 
@@ -46,8 +46,37 @@ export default function RecipeBuilder() {
     }
   };
 
+  const handleSelectIngredient = (food) => {
+    const newIngredient = {
+      id: food.foodId + Date.now(),
+      name: food.foodName,
+      calories: food.foodKcal,
+      protein: food.foodProtein,
+      fats: food.foodFat,
+      carbs: food.foodCarbs,
+      weight: 100,
+    };
+    setIngredients((prev) => [...prev, newIngredient]);
+    setSearchQuery("");
+    setIsDropdownOpen(false);
+  };
+  const handleRemoveIngredient = (id) => {
+    setIngredients((prev) => prev.filter((ingredient) => ingredient.id !== id));
+  };
+  const handleUpdateWeight = (id, newWeight) => {
+    setIngredients((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, weight: Number(newWeight) } : item,
+      ),
+    );
+  };
+
   return (
     <div className="">
+      <h1 className="">Create new recipe</h1>
+      <button type="button" onClick={onCancel}>
+        ← Back
+      </button>
       <input
         type="text"
         className=""
@@ -69,6 +98,7 @@ export default function RecipeBuilder() {
               searchResults.map((result) => (
                 <div
                   key={result.foodId}
+                  onClick={() => handleSelectIngredient(result)}
                   className="p-3 bg-white border-b border-slate-100 hover:bg-sky-50 cursor-pointer shadow-lg"
                 >
                   {result.foodName} {result.foodKcal} kcal
@@ -81,7 +111,23 @@ export default function RecipeBuilder() {
             )}
           </div>
         )}
-        <div className=""></div>
+        <div className="">
+          {ingredients.length === 0
+            ? "No ingredients added yet. Search and select items above."
+            : ingredients.map((ingredient) => (
+                <div className="">
+                  <p>{ingredient.name}</p>
+                  <p>{ingredient.calories}</p>
+                  <input type="number" value={ingredient.weight} onChange={e=>handleUpdateWeight(ingredient.id, e.target.value)}/>
+                  <button
+                    onClick={() => handleRemoveIngredient(ingredient.id)}
+                    className="text-red-400 text-xl font-bold hover:text-red-500 transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+        </div>
       </div>
     </div>
   );

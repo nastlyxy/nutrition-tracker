@@ -110,7 +110,7 @@ export default function AddFoodForm() {
   };
 
   if (isBuildingRecipe) {
-    return <RecipeBuilder />;
+    return <RecipeBuilder onCancel={()=>setIsBuildingRecipe(false)}/>;
   }
 
   return (
