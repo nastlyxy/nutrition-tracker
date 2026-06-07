@@ -1,5 +1,6 @@
 import { useState, useContext, useRef, useEffect } from "react";
 import { FoodContext } from "../context/FoodContext";
+import RecipeBuilder from "./RecipeBuilder";
 
 export default function AddFoodForm() {
   const { handleAddFood } = useContext(FoodContext);
@@ -19,6 +20,8 @@ export default function AddFoodForm() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const [isBuildingRecipe, setIsBuildingRecipe] = useState(false);
 
   useEffect(() => {
     if (searchQuery.length < 2) {
@@ -58,6 +61,17 @@ export default function AddFoodForm() {
     }
   };
 
+  const handleSelectFood = (food) => {
+    setName(food.foodName);
+    setCalories(food.foodKcal);
+    setProtein(food.foodProtein);
+    setFats(food.foodFats);
+    setCarbs(food.foodCarbs);
+    setActiveTab("manual");
+    setSearchQuery("");
+    setIsDropdownOpen(false);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     let finalCalories = Number(calories);
@@ -95,26 +109,45 @@ export default function AddFoodForm() {
     }
   };
 
+  if (isBuildingRecipe) {
+    return <RecipeBuilder />;
+  }
+
   return (
     <form
       className="bg-white rounded-2xl shadow-md p-6 mt-8"
       onSubmit={handleSubmit}
     >
-      <div className="bg-slate-100 p-1 rounded-xl">
+      <div className="flex w-full bg-slate-100 p-1.5 rounded-2xl mb-8 shadow-inner gap-1">
         <button
-          className={`${activeTab === "search" && "bg-white shadow-sm"}`}
+          type="button"
+          className={`flex-1 py-3 text-base rounded-xl transition-all duration-300 ${
+            activeTab === "search"
+              ? "bg-white text-sky-600 font-bold shadow-sm scale-100"
+              : "text-slate-500 font-medium hover:text-slate-700 hover:bg-slate-200/50 scale-95 hover:scale-100"
+          }`}
           onClick={() => setActiveTab("search")}
         >
           Search
         </button>
         <button
-          className={`${activeTab === "manual" && "bg-white shadow-sm"}`}
+          type="button"
+          className={`flex-1 py-3 text-base rounded-xl transition-all duration-300 ${
+            activeTab === "manual"
+              ? "bg-white text-sky-600 font-bold shadow-sm scale-100"
+              : "text-slate-500 font-medium hover:text-slate-700 hover:bg-slate-200/50 scale-95 hover:scale-100"
+          }`}
           onClick={() => setActiveTab("manual")}
         >
           Manual
         </button>
         <button
-          className={`${activeTab === "myMeals" && "bg-white shadow-sm"}`}
+          type="button"
+          className={`flex-1 py-3 text-base rounded-xl transition-all duration-300 ${
+            activeTab === "myMeals"
+              ? "bg-white text-sky-600 font-bold shadow-sm scale-100"
+              : "text-slate-500 font-medium hover:text-slate-700 hover:bg-slate-200/50 scale-95 hover:scale-100"
+          }`}
           onClick={() => setActiveTab("myMeals")}
         >
           My Meals
@@ -129,17 +162,25 @@ export default function AddFoodForm() {
             placeholder="Search food (e.g. Banana)..."
             className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:ring-2 focus:ring-sky-400"
           />
-          <div className="absolute top-full left-0 w-full z-10">
-            {isDropdownOpen && searchResults.length > 0 ? (
-              searchResults.map((result) => (
-                <div key={result.foodId} className="p-3 bg-white border-b border-slate-100 hover:bg-sky-50 cursor-pointer shadow-lg">
-                  {result.foodName} {result.foodKcal} kcal
+          {searchQuery.length >= 2 && (
+            <div className="absolute top-full left-0 w-full z-10">
+              {isDropdownOpen && searchResults.length > 0 ? (
+                searchResults.map((result) => (
+                  <div
+                    key={result.foodId}
+                    onClick={() => handleSelectFood(result)}
+                    className="p-3 bg-white border-b border-slate-100 hover:bg-sky-50 cursor-pointer shadow-lg"
+                  >
+                    {result.foodName} {result.foodKcal} kcal
+                  </div>
+                ))
+              ) : (
+                <div className="p-3 bg-white shadow-lg border border-slate-100 rounded-b-lg text-slate-500">
+                  No results found
                 </div>
-              ))
-            ) : (
-              <div>No results found</div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       )}
       {activeTab === "manual" && (
@@ -207,6 +248,30 @@ export default function AddFoodForm() {
             />
           )}
         </>
+      )}
+      {activeTab === "myMeals" && (
+        <div className="">
+          <button
+            type="button"
+            onClick={() => setIsBuildingRecipe(true)}
+            className="w-full py-5 border-2 border-dashed border-sky-300 rounded-2xl text-sky-600 font-bold text-lg hover:bg-sky-50 hover:border-sky-400 hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Create Custom Recipe
+          </button>
+        </div>
       )}
       <button
         type="submit"
