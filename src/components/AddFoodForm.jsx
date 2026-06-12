@@ -1,9 +1,13 @@
 import { useState, useContext, useRef, useEffect } from "react";
 import { FoodContext } from "../context/FoodContext";
+import { AuthContext } from "../context/AuthContext";
 import RecipeBuilder from "./RecipeBuilder";
+import { db } from "../firebase";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 
 export default function AddFoodForm() {
   const { handleAddFood } = useContext(FoodContext);
+  const { user } = useContext(AuthContext);
 
   const nameInputRef = useRef(null);
 
@@ -22,6 +26,7 @@ export default function AddFoodForm() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [isBuildingRecipe, setIsBuildingRecipe] = useState(false);
+  const [customRecipes, setCustomRecipes] = useState([]);
 
   useEffect(() => {
     if (searchQuery.length < 2) {
@@ -34,6 +39,29 @@ export default function AddFoodForm() {
     }, 500);
     return () => clearTimeout(time);
   }, [searchQuery]);
+
+  useEffect(() => {
+    const fetchCustomRecipes = async () => {
+      if (!user) return;
+      try {
+        const recipesCollectionRef = collection(
+          db,
+          "users",
+          user.uid,
+          "custom_recipes",
+        );
+        const querySnapshot = await getDocs(recipesCollectionRef);
+        const recipesList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCustomRecipes(recipesList);
+      } catch (err) {
+        console.error("Error fetching recipes: ", err);
+      }
+    };
+    fetchCustomRecipes();
+  }, [user, isBuildingRecipe]);
 
   const fetchFoodFromAPI = async () => {
     const apiId = import.meta.env.VITE_EDAMAM_APP_ID;
@@ -110,7 +138,7 @@ export default function AddFoodForm() {
   };
 
   if (isBuildingRecipe) {
-    return <RecipeBuilder onCancel={()=>setIsBuildingRecipe(false)}/>;
+    return <RecipeBuilder onCancel={() => setIsBuildingRecipe(false)} />;
   }
 
   return (
@@ -271,6 +299,19 @@ export default function AddFoodForm() {
             </svg>
             Create Custom Recipe
           </button>
+
+          <div className="">
+            {customRecipes.length > 0 ? (
+              customRecipes.map((recipe) => (
+                <div key={recipe.id}>
+                  <p>{recipe.name}</p>
+                  <p>{recipe.calories} kcal | {recipe.protein} g P | {recipe.fats} g F | {recipe.carbs} g C</p>
+                </div>
+              ))
+            ) : (
+              <p>You don't have recipes yet. Create the first one!</p>
+            )}
+          </div>
         </div>
       )}
       <button
