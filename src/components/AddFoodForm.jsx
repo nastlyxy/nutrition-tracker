@@ -3,7 +3,7 @@ import { FoodContext } from "../context/FoodContext";
 import { AuthContext } from "../context/AuthContext";
 import RecipeBuilder from "./RecipeBuilder";
 import { db } from "../firebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore";
 
 export default function AddFoodForm() {
   const { handleAddFood } = useContext(FoodContext);
@@ -100,7 +100,38 @@ export default function AddFoodForm() {
     setIsDropdownOpen(false);
   };
 
+  const handleSelectCustomRecipe = (recipe) => {
+    setName(recipe.name);
+    setCalories(recipe.calories);
+    setProtein(recipe.protein);
+    setFats(recipe.fats);
+    setCarbs(recipe.carbs);
+    setIsPer100g(true);
+    setActiveTab("manual");
+  };
+
+  const handleDeleteRecipe = async (e, id) => {
+    e.stopPropagation();
+    try {
+      const recipeDocRef = doc(
+        db,
+        "users",
+        user.uid,
+        "custom_recipes",
+        id,
+      );
+      await deleteDoc(recipeDocRef);
+      setCustomRecipes(customRecipes.filter((recipe) => recipe.id !== id));
+    } catch (err) {
+      console.error("Error deleting recipe: ", err);
+    }
+  };
+
   const handleSubmit = (e) => {
+    if (!name.trim()) {
+      alert("Please enter a meal name or select one from the list!");
+      return;
+    }
     e.preventDefault();
     let finalCalories = Number(calories);
     let finalProtein = Number(protein);
@@ -303,9 +334,41 @@ export default function AddFoodForm() {
           <div className="">
             {customRecipes.length > 0 ? (
               customRecipes.map((recipe) => (
-                <div key={recipe.id}>
-                  <p>{recipe.name}</p>
-                  <p>{recipe.calories} kcal | {recipe.protein} g P | {recipe.fats} g F | {recipe.carbs} g C</p>
+                <div
+                  key={recipe.id}
+                  onClick={() => handleSelectCustomRecipe(recipe)}
+                  className="flex justify-between items-center bg-white border border-slate-200 rounded-xl p-4 mb-3 mt-4 hover:bg-sky-50 hover:border-sky-300 hover:shadow-md cursor-pointer transition-all"
+                >
+                  <div className="flex flex-wrap gap-4 text-sm font-medium">
+                    <p>{recipe.name}</p>
+                    <span className="text-slate-600">
+                      {recipe.calories} kcal
+                    </span>
+                    <span className="text-green-500">{recipe.protein}g P</span>
+                    <span className="text-amber-500">{recipe.fats}g F</span>
+                    <span className="text-cyan-500">{recipe.carbs}g C</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => handleDeleteRecipe(e, recipe.id)}
+                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                    title="Delete recipe"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                      />
+                    </svg>
+                  </button>
                 </div>
               ))
             ) : (
@@ -314,12 +377,14 @@ export default function AddFoodForm() {
           </div>
         </div>
       )}
-      <button
-        type="submit"
-        className="text-white bg-sky-500 hover:bg-sky-600 focus:ring-sky-300 shadow-xs font-medium leading-5 rounded-lg text-sm px-4 py-2.5"
-      >
-        Add meal
-      </button>
+      {activeTab !== "myMeals" && (
+        <button
+          type="submit"
+          className="text-white bg-sky-500 hover:bg-sky-600 focus:ring-sky-300 shadow-xs font-medium leading-5 rounded-lg text-sm px-4 py-2.5"
+        >
+          Add meal
+        </button>
+      )}
     </form>
   );
 }
