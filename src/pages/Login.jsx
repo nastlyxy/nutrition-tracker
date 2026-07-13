@@ -1,14 +1,16 @@
 import { auth } from "../firebase";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import logo from "../assets/images/SimplyCalo.png";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
+      toast.success("Login successfully")
     } catch (error) {
-      console.error("Login error: ", error);
+      toast.error(error.message);
     }
   };
 

@@ -4,6 +4,7 @@ import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
 import { AuthContext } from "./AuthContext";
 import {UserContext} from "./UserContext"
 import { calculateBMR, calculateTDEE, calculateMacros } from "../utils/calculator";
+import toast from "react-hot-toast";
 
 export const FoodContext = createContext();
 
@@ -61,6 +62,7 @@ export function FoodProvider({ children }) {
     
     const docRef = doc(db, "users", user.uid, "daily_logs", currentDay);
     await setDoc(docRef, { foods: updatedFoods }, { merge: true });
+    toast.success("Meal deleted!");
   };
 
   return (

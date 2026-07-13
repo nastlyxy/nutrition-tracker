@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import toast from "react-hot-toast";
 
 export default function Profile() {
   const { userStats, updateUser } = useContext(UserContext);
@@ -25,14 +26,14 @@ export default function Profile() {
   const handleSave = (e) => {
     e.preventDefault();
     updateUser(formData);
-    alert("Profile saved successfully!");
+    toast.success("Profile updated!");
   };
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
     } catch (error) {
-      console.error("Error in sign out", error);
+      toast.error("Error in sign out");
     }
   };
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 export default function RecipeBuilder({ onCancel }) {
   const [recipeName, setRecipeName] = useState("");
@@ -13,6 +14,7 @@ export default function RecipeBuilder({ onCancel }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     if (searchQuery.length < 2) {
@@ -30,6 +32,7 @@ export default function RecipeBuilder({ onCancel }) {
     const apiId = import.meta.env.VITE_EDAMAM_APP_ID;
     const apiKey = import.meta.env.VITE_EDAMAM_APP_KEY;
     try {
+      setIsSearching(true);
       const response = await fetch(
         `https://api.edamam.com/api/food-database/v2/parser?app_id=${apiId}&app_key=${apiKey}&ingr=${searchQuery}`,
       );
@@ -47,8 +50,10 @@ export default function RecipeBuilder({ onCancel }) {
       }));
       setSearchResults(parsedResults);
       setIsDropdownOpen(true);
-    } catch (err) {
-      console.error("Error to fetch: ", err.message);
+    } catch (error) {
+      toast.error("Error fetching")
+    }finally {
+      setIsSearching(false);
     }
   };
 
@@ -105,7 +110,7 @@ export default function RecipeBuilder({ onCancel }) {
 
   const handleSaveRecipe = async () => {
     if (!recipeName || ingredients.length === 0)
-      return alert("Enter the name and add the products");
+      return toast.error("Enter the name and add the products");
     const recipeData = {
       name: recipeName,
       calories: macrosPer100g.calories,
@@ -118,8 +123,9 @@ export default function RecipeBuilder({ onCancel }) {
       const recipesRef = collection(db, "users", user.uid, "custom_recipes");
       const docRef = await addDoc(recipesRef, recipeData);
       onCancel();
-    } catch (err) {
-      console.error("Error adding a recipe: ", err);
+      toast.success("Recipe added successfully!")
+    } catch (error) {
+      toast.error("Error adding recipe");
     }
   };
 
@@ -150,6 +156,30 @@ export default function RecipeBuilder({ onCancel }) {
           placeholder="Search food (e.g. Banana)..."
           className="border border-slate-300 rounded-lg px-4 py-2 w-full outline-none focus:ring-2 focus:ring-sky-400"
         />
+        {isSearching && (
+            <div className="absolute right-3 top-3">
+              <svg
+                className="animate-spin h-5 w-5 text-sky-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+          )}
         {searchQuery.length >= 2 && (
           <div className="absolute top-full left-0 w-full z-10">
             {isDropdownOpen && searchResults.length > 0 ? (

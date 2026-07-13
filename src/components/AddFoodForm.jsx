@@ -10,6 +10,7 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 export default function AddFoodForm() {
   const { handleAddFood } = useContext(FoodContext);
@@ -63,8 +64,8 @@ export default function AddFoodForm() {
           ...doc.data(),
         }));
         setCustomRecipes(recipesList);
-      } catch (err) {
-        console.error("Error fetching recipes: ", err);
+      } catch (error) {
+       toast.error("Failed to load your recipes")
       }
     };
     fetchCustomRecipes();
@@ -92,8 +93,8 @@ export default function AddFoodForm() {
       }));
       setSearchResults(parsedResults);
       setIsDropdownOpen(true);
-    } catch (err) {
-      console.error("Error to fetch: ", err.message);
+    } catch (error) {
+      toast.error("Failed to fetch food data");
     } finally {
       setIsSearching(false);
     }
@@ -126,17 +127,18 @@ export default function AddFoodForm() {
       const recipeDocRef = doc(db, "users", user.uid, "custom_recipes", id);
       await deleteDoc(recipeDocRef);
       setCustomRecipes(customRecipes.filter((recipe) => recipe.id !== id));
-    } catch (err) {
-      console.error("Error deleting recipe: ", err);
+      toast.success("Recipe deleted!");
+    } catch (error) {
+      toast.error("Error deleting recipe");
     }
   };
 
   const handleSubmit = (e) => {
+    e.preventDefault();
     if (!name.trim()) {
-      alert("Please enter a meal name or select one from the list!");
+      toast.error("Please enter a meal name or select one from the list!");
       return;
     }
-    e.preventDefault();
     let finalCalories = Number(calories);
     let finalProtein = Number(protein);
     let finalFats = Number(fats);
@@ -160,6 +162,7 @@ export default function AddFoodForm() {
     };
 
     handleAddFood(newFood);
+    toast.success("Meal added successfully!");
     setName("");
     setCalories("");
     setProtein("");
