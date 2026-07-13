@@ -3,7 +3,13 @@ import { FoodContext } from "../context/FoodContext";
 import { AuthContext } from "../context/AuthContext";
 import RecipeBuilder from "./RecipeBuilder";
 import { db } from "../firebase";
-import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 
 export default function AddFoodForm() {
   const { handleAddFood } = useContext(FoodContext);
@@ -24,6 +30,7 @@ export default function AddFoodForm() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   const [isBuildingRecipe, setIsBuildingRecipe] = useState(false);
   const [customRecipes, setCustomRecipes] = useState([]);
@@ -67,6 +74,7 @@ export default function AddFoodForm() {
     const apiId = import.meta.env.VITE_EDAMAM_APP_ID;
     const apiKey = import.meta.env.VITE_EDAMAM_APP_KEY;
     try {
+      setIsSearching(true);
       const response = await fetch(
         `https://api.edamam.com/api/food-database/v2/parser?app_id=${apiId}&app_key=${apiKey}&ingr=${searchQuery}`,
       );
@@ -86,6 +94,8 @@ export default function AddFoodForm() {
       setIsDropdownOpen(true);
     } catch (err) {
       console.error("Error to fetch: ", err.message);
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -113,13 +123,7 @@ export default function AddFoodForm() {
   const handleDeleteRecipe = async (e, id) => {
     e.stopPropagation();
     try {
-      const recipeDocRef = doc(
-        db,
-        "users",
-        user.uid,
-        "custom_recipes",
-        id,
-      );
+      const recipeDocRef = doc(db, "users", user.uid, "custom_recipes", id);
       await deleteDoc(recipeDocRef);
       setCustomRecipes(customRecipes.filter((recipe) => recipe.id !== id));
     } catch (err) {
@@ -213,14 +217,38 @@ export default function AddFoodForm() {
         </button>
       </div>
       {activeTab === "search" && (
-        <div className="relative">
+        <div className="relative mb-4">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search food (e.g. Banana)..."
-            className="border border-slate-300 rounded-lg px-4 py-2 w-full mb-4 outline-none focus:ring-2 focus:ring-sky-400"
+            className="border border-slate-300 rounded-lg px-4 py-2 w-full outline-none focus:ring-2 focus:ring-sky-400"
           />
+          {isSearching && (
+            <div className="absolute right-3 top-3">
+              <svg
+                className="animate-spin h-5 w-5 text-sky-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+          )}
           {searchQuery.length >= 2 && (
             <div className="absolute top-full left-0 w-full z-10">
               {isDropdownOpen && searchResults.length > 0 ? (

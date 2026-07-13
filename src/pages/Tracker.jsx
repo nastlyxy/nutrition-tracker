@@ -35,9 +35,7 @@ export default function Tracker() {
 
   if (isProfileLoading) {
     return (
-      <div className="text-center mt-20 text-slate-500 font-semibold">
-        Loading your profile...
-      </div>
+      <div className="bg-slate-200 animate-pulse rounded-2xl w-full h-48 sm:h-64 md:h-72 shadow-sm" />
     );
   }
 
