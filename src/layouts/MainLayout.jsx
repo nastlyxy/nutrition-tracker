@@ -8,7 +8,7 @@ export default function MainLayout() {
       <div className="mx-auto max-w-2xl">
         <nav className="bg-white rounded-2xl shadow-sm p-5 mb-8 flex items-center justify-between">
           <Link to={"/"}>
-            <img className="h-12 w-auto" src={logo} alt="logo" />
+            <img className="h-9 w-auto md:h-12" src={logo} alt="logo" />
           </Link>
           <div className="flex gap-7">
            <Link

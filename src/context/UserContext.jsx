@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 export const UserContext = createContext();
 
@@ -33,7 +34,7 @@ export function UserProvider({ children }) {
           setUserStats(docSnap.data().profile);
         }
       } catch (error) {
-        console.error("Error loading:", error);
+        toast.error("Error loading")
       } finally {
         setIsProfileLoading(false);
       }
@@ -51,10 +52,10 @@ export function UserProvider({ children }) {
       try {
       const docRef = doc(db, "users", user.uid);
       await setDoc(docRef, { profile: newStats }, { merge: true });
-      console.log("Successfully saved in the database");
+      toast.success("Successfully saved in the database");
     } catch (error) {
-      console.error("Error Firebase:", error);
-      alert("Error, no saving");
+      toast.error("Error Firebase:", error);
+      toast.error("Error updating profile")
     }
     }
   };

@@ -187,7 +187,7 @@ export default function AddFoodForm() {
       <div className="flex w-full bg-slate-100 p-1.5 rounded-2xl mb-8 shadow-inner gap-1">
         <button
           type="button"
-          className={`flex-1 py-3 text-base rounded-xl transition-all duration-300 ${
+          className={`flex-1 py-2 text-sm md:py-3 md:text-base rounded-xl transition-all duration-300 ${
             activeTab === "search"
               ? "bg-white text-sky-600 font-bold shadow-sm scale-100"
               : "text-slate-500 font-medium hover:text-slate-700 hover:bg-slate-200/50 scale-95 hover:scale-100"
@@ -198,7 +198,7 @@ export default function AddFoodForm() {
         </button>
         <button
           type="button"
-          className={`flex-1 py-3 text-base rounded-xl transition-all duration-300 ${
+          className={`flex-1  py-2 text-sm md:py-3 md:text-base rounded-xl transition-all duration-300 ${
             activeTab === "manual"
               ? "bg-white text-sky-600 font-bold shadow-sm scale-100"
               : "text-slate-500 font-medium hover:text-slate-700 hover:bg-slate-200/50 scale-95 hover:scale-100"
@@ -209,7 +209,7 @@ export default function AddFoodForm() {
         </button>
         <button
           type="button"
-          className={`flex-1 py-3 text-base rounded-xl transition-all duration-300 ${
+          className={`flex-1  py-2 text-sm md:py-3 md:text-base rounded-xl transition-all duration-300 ${
             activeTab === "myMeals"
               ? "bg-white text-sky-600 font-bold shadow-sm scale-100"
               : "text-slate-500 font-medium hover:text-slate-700 hover:bg-slate-200/50 scale-95 hover:scale-100"

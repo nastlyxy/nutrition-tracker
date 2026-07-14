@@ -208,8 +208,8 @@ export default function RecipeBuilder({ onCancel }) {
                 className="bg-slate-50 p-3 rounded-xl flex items-center justify-between mb-2 border border-slate-100 shadow-sm"
                 key={ingredient.id}
               >
-                <div className="flex flex-col">
-                  <span className="font-medium text-slate-700">
+                <div className="flex-1 min-w-0 flex-col">
+                  <span className="font-medium text-slate-700 break-words whitespace-normal">
                     {ingredient.name}
                   </span>
                   <span className="text-xs text-slate-400">
@@ -270,7 +270,7 @@ export default function RecipeBuilder({ onCancel }) {
           </h4>
         </div>
 
-        <div className="grid grid-cols-4 gap-3 text-center">
+        <div className="grid grid-cols-2 gap-3 text-center md:grid-cols-4">
           <div className="bg-white p-3 rounded-lg shadow-sm border border-slate-100">
             <p className="text-xs text-slate-400 font-medium mb-1">Kcal</p>
             <p className="font-bold text-slate-700 text-lg">
